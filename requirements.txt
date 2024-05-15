@@ -1,0 +1,5 @@
+fitz
+opencv-python
+PyMuPDF
+numpy
+pytesseract
