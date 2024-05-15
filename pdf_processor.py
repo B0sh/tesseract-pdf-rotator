@@ -28,7 +28,7 @@ class PDFProcessor:
 
     def rotate_page(self, page, angle):
         if angle in [0, 90, 180, 270]:
-            page.set_rotation(rotation[angle])
+            page.set_rotation(angle)
 
     def process_page(self, document, page_num):
         page = document.load_page(page_num)
