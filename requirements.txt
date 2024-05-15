@@ -3,3 +3,4 @@ opencv-python
 PyMuPDF
 numpy
 pytesseract
+PyQt5
