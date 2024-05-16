@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import pytesseract
 import re
-from concurrent.futures import ThreadPoolExecutor, as_completed
+# from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class PDFProcessor:
     def __init__(self, input_pdf_path, output_pdf_path, remove_blank_pages=False):
@@ -51,14 +51,25 @@ class PDFProcessor:
 
         processed_pages = [None] * len(document)  # Placeholder for processed pages
 
-        with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(self.process_page, document, page_num) for page_num in range(len(document))]
-            for i, future in enumerate(as_completed(futures)):
-                page = future.result()
-                if page:
-                    processed_pages[page.number] = page
-                if progress_callback:
-                    progress_callback(i + 1, len(document))
+        for page_num in range(len(document)):
+            page = self.process_page(document, page_num)
+            if page:
+                new_document.insert_pdf(document, from_page=page.number, to_page=page.number)
+            if progress_callback:
+                progress_callback(page_num + 1, len(document))
+
+        # with ThreadPoolExecutor() as executor:
+        #     futures = [executor.submit(self.process_page, document, page_num) for page_num in range(len(document))]
+        #     for i, future in enumerate(as_completed(futures)):
+        #         try:
+        #             page = future.result()
+        #             if page:
+        #                 processed_pages[page.number] = page
+        #         except Exception as e:
+        #             print (f"Error processing page {page.number + 1}: {e}")
+
+        #         if progress_callback:
+        #             progress_callback(i + 1, len(document))
 
         for page in processed_pages:
             if page:
