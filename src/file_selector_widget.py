@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QCheckBox, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt, pyqtSignal
 
 class ClickableLabel(QLabel):
@@ -14,7 +14,7 @@ class ClickableLabel(QLabel):
         super().mousePressEvent(event)
 
 class FileSelectorWidget(QWidget):
-    file_selected = pyqtSignal(str, str)  # Input path, Output path
+    file_selected = pyqtSignal(str, str, bool)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -29,16 +29,33 @@ class FileSelectorWidget(QWidget):
         self.label.setStyleSheet("QLabel { border: 4px dashed #aaa; }")
         self.label.clicked.connect(self.open_file_dialog)
 
-        self.button = QPushButton("Next", self)
+        self.button = QPushButton("Process PDF", self)
         self.button.clicked.connect(self.select_output_file)
         self.button.setEnabled(False)
 
+        self.remove_blank_pages_checkbox = QCheckBox("Remove Blank Pages", self)
+        self.remove_blank_pages_checkbox.setChecked(True)
+        self.remove_blank_pages_checkbox.stateChanged.connect(self.toggle_remove_blank_pages)
+
         layout = QVBoxLayout()
         layout.addWidget(self.label)
+
+        spacer = QSpacerItem(4, 4)
+        layout.addItem(spacer)
+        
+        layout.addWidget(self.remove_blank_pages_checkbox)
         layout.addWidget(self.button)
 
         self.setLayout(layout)
         self.setAcceptDrops(True)
+
+        self.reset()
+        self.remove_blank_pages = True
+
+    def reset(self):
+        self.label.setText("Drag and drop a PDF file here\nor click to choose a file")
+        self.button.setEnabled(False)
+        self.input_pdf_path = None
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -63,6 +80,15 @@ class FileSelectorWidget(QWidget):
 
     def select_output_file(self):
         options = QFileDialog.Options()
-        output_pdf_path, _ = QFileDialog.getSaveFileName(self, "Save Processed PDF", "", "PDF Files (*.pdf);;All Files (*)", options=options)
+        
+        input_dir, input_file = os.path.split(self.input_pdf_path)
+        output_file_name = os.path.splitext(input_file)[0] + "-processed.pdf"
+        default_output_path = os.path.join(input_dir, output_file_name)
+        
+        output_pdf_path, _ = QFileDialog.getSaveFileName(self, "Save Processed PDF", default_output_path, "PDF Files (*.pdf);;All Files (*)", options=options)
+        
         if output_pdf_path:
-            self.file_selected.emit(self.input_pdf_path, output_pdf_path)
+            self.file_selected.emit(self.input_pdf_path, output_pdf_path, self.remove_blank_pages)
+
+    def toggle_remove_blank_pages(self, state):
+        self.remove_blank_pages = state == Qt.Checked

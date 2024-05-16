@@ -20,6 +20,8 @@ class PDFProcessorThread(QThread):
         self.progress.emit(current, total)
 
 class ProcessingWidget(QWidget):
+    processing_finished = pyqtSignal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
@@ -28,7 +30,7 @@ class ProcessingWidget(QWidget):
         self.setWindowTitle("PDF Processor - Processing")
         self.setGeometry(100, 100, 400, 200)
 
-        self.label = QLabel("Processing PDF...", self)
+        self.label = QLabel("Creating PDF Images", self)
         self.label.setAlignment(Qt.AlignCenter)
 
         self.progress = QProgressBar(self)
@@ -41,13 +43,18 @@ class ProcessingWidget(QWidget):
 
         self.setLayout(layout)
 
-    def start_processing(self, input_pdf_path, output_pdf_path):
-        self.thread = PDFProcessorThread(input_pdf_path, output_pdf_path, remove_blank_pages=True)
+    def start_processing(self, input_pdf_path, output_pdf_path, remove_blank_pages):
+        self.thread = PDFProcessorThread(input_pdf_path, output_pdf_path, remove_blank_pages)
         self.thread.progress.connect(self.update_progress)
         self.thread.start()
 
     def update_progress(self, current, total):
+        self.label.setText("Scanning Page %d of %d" % (current, total))
         self.progress.setMaximum(total)
         self.progress.setValue(current)
+
         if current == total:
-            self.label.setText(f"Processed PDF saved!")
+            self.finish_processing()
+
+    def finish_processing(self):
+        self.processing_finished.emit()

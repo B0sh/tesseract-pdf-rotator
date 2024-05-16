@@ -16,10 +16,15 @@ class PDFProcessorApp(QStackedWidget):
         self.addWidget(self.file_selector)
         self.addWidget(self.processing_screen)
 
-        self.file_selector.file_selected.connect(self.start_processing)
+        self.file_selector.file_selected.connect(self.on_pdf_file_selected)
+        self.processing_screen.processing_finished.connect(self.on_pdf_finished_processing)
 
         self.resize(400, 200)
 
-    def start_processing(self, input_pdf_path, output_pdf_path):
+    def on_pdf_file_selected(self, input_pdf_path, output_pdf_path, remove_blank_pages):
         self.setCurrentWidget(self.processing_screen)
-        self.processing_screen.start_processing(input_pdf_path, output_pdf_path)
+        self.processing_screen.start_processing(input_pdf_path, output_pdf_path, remove_blank_pages)
+
+    def on_pdf_finished_processing(self):
+        self.setCurrentWidget(self.file_selector)
+        self.file_selector.reset()

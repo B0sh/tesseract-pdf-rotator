@@ -59,3 +59,8 @@ class PDFProcessor:
                     progress_callback(i + 1, len(document))
         
         new_document.save(self.output_pdf_path)
+
+        return {
+            "total_pages_processed": len(document),
+            "total_pages": len(new_document)
+        }
