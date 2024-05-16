@@ -1,6 +1,6 @@
-fitz
 opencv-python
 PyMuPDF
 numpy
 pytesseract
 PyQt5
+fitz
