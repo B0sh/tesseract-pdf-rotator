@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QStackedWidget
-from file_selector_widget import FileSelectorWidget
-from processing_widget import ProcessingWidget
+from src.file_selector_widget import FileSelectorWidget
+from src.processing_widget import ProcessingWidget
 
 
 class PDFProcessorApp(QStackedWidget):

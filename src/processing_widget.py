@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QProgressBar
 from PyQt5.QtCore import Qt
-from pdf_processor import PDFProcessor
+from src.pdf_processor import PDFProcessor
 from PyQt5.QtCore import QThread, pyqtSignal
 
 class PDFProcessorThread(QThread):
