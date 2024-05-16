@@ -20,3 +20,10 @@ def show_error_message(message):
     msg_box.exec_()
     sys.exit(1)
 
+def show_info_message(message):
+    app = QApplication(sys.argv)
+    msg_box = QMessageBox()
+    msg_box.setIcon(QMessageBox.Information)
+    msg_box.setText(message)
+    msg_box.setWindowTitle("Information")
+    msg_box.exec_()

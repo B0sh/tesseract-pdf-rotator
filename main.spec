@@ -1,15 +1,21 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_data_files
+
+datas=[
+    ('/opt/homebrew/bin/tesseract', 'tesseract'),
+    ('/opt/homebrew/share/tessdata/', 'tessdata')
+]
+datas += collect_data_files('fitz')
+datas += collect_data_files('pytesseract')
+
 
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[
-        ('/opt/homebrew/bin/tesseract', 'tesseract'),
-        ('/opt/homebrew/share/tessdata/', 'tessdata')
-    ],
-    hiddenimports=['pytesseract'],
+    datas=datas,
+    hiddenimports=['opencv-python', 'PyMuPDF', 'fitz'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

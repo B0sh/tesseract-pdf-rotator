@@ -11,13 +11,14 @@ def find_tesseract_resources():
     else:
         bundle_dir = os.path.dirname(os.path.abspath(__file__))
 
-    tesseract_executable = os.path.join(bundle_dir, 'tesseract')
+    tesseract_executable = os.path.join(os.path.join(bundle_dir, 'tesseract'), 'tesseract')
     tessdata_dir = os.path.join(bundle_dir, 'tessdata')
+
 
     # Check if tesseract executable and tessdata directory exist in the initial locations
     if not os.path.exists(tesseract_executable):
-        bundle_dir = os.path.join(bundle_dir, 'dist/Walden PDF.app/Contents/Resources/')
-        tesseract_executable = os.path.join(bundle_dir, 'tesseract')
+        bundle_dir = os.path.join(bundle_dir, 'dist/Walden PDF.app/Contents/Frameworks/')
+        tesseract_executable = os.path.join(os.path.join(bundle_dir, 'tesseract'), 'tesseract')
         tessdata_dir = os.path.join(bundle_dir, 'tessdata')
 
     # Final check to ensure paths exist
