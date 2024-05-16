@@ -35,9 +35,6 @@ class ProcessingWidget(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle("PDF Processor - Processing")
-        self.setGeometry(100, 100, 400, 200)
-
         self.label = QLabel("Creating PDF Images", self)
         self.label.setAlignment(Qt.AlignCenter)
 
@@ -69,6 +66,8 @@ class ProcessingWidget(QWidget):
 
     def finish_processing(self, result):
         self.processing_finished.emit(result)
+        self.progress.setValue(0)
+        self.label.setText("Creating PDF Images")
 
     def handle_error(self, error):
         show_error_message(error)

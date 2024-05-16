@@ -2,14 +2,16 @@ import sys
 import os
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from src.app import PDFProcessorApp
-from src.utilities import show_error_message
+from src.utilities import show_error_message, show_info_message
 import pytesseract
 
 def find_tesseract_resources():
     if getattr(sys, 'frozen', False):
         bundle_dir = sys._MEIPASS
+        # show_info_message(f"Bundle directory with MEIPASS: {bundle_dir}")
     else:
         bundle_dir = os.path.dirname(os.path.abspath(__file__))
+        # show_info_message(f"Bundle directory: {bundle_dir}")
 
     tesseract_executable = os.path.join(os.path.join(bundle_dir, 'tesseract'), 'tesseract')
     tessdata_dir = os.path.join(bundle_dir, 'tessdata')
