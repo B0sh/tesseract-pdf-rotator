@@ -2,7 +2,7 @@ import os
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog
 from PyQt5.QtCore import Qt, pyqtSignal
 
-class FileSelector(QWidget):
+class FileSelectorWidget(QWidget):
     file_selected = pyqtSignal(str, str)  # Input path, Output path
 
     def __init__(self, parent=None):

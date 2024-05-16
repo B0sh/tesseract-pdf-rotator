@@ -19,7 +19,7 @@ class PDFProcessorThread(QThread):
     def update_progress(self, current, total):
         self.progress.emit(current, total)
 
-class ProcessingScreen(QWidget):
+class ProcessingWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
