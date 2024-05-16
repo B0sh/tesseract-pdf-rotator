@@ -5,6 +5,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 class PDFProcessorThread(QThread):
     progress = pyqtSignal(int, int)  # Current progress, total progress
+    result = pyqtSignal(dict)  # Dictionary containing total_pages_processed and total_pages
 
     def __init__(self, input_pdf_path, output_pdf_path, remove_blank_pages):
         super().__init__()
@@ -14,13 +15,13 @@ class PDFProcessorThread(QThread):
 
     def run(self):
         processor = PDFProcessor(self.input_pdf_path, self.output_pdf_path, self.remove_blank_pages)
-        processor.process_pdf(self.update_progress)
+        self.result.emit(processor.process_pdf(self.update_progress))
 
     def update_progress(self, current, total):
         self.progress.emit(current, total)
 
 class ProcessingWidget(QWidget):
-    processing_finished = pyqtSignal()
+    processing_finished = pyqtSignal(dict)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -46,6 +47,7 @@ class ProcessingWidget(QWidget):
     def start_processing(self, input_pdf_path, output_pdf_path, remove_blank_pages):
         self.thread = PDFProcessorThread(input_pdf_path, output_pdf_path, remove_blank_pages)
         self.thread.progress.connect(self.update_progress)
+        self.thread.result.connect(self.finish_processing)
         self.thread.start()
 
     def update_progress(self, current, total):
@@ -53,8 +55,5 @@ class ProcessingWidget(QWidget):
         self.progress.setMaximum(total)
         self.progress.setValue(current)
 
-        if current == total:
-            self.finish_processing()
-
-    def finish_processing(self):
-        self.processing_finished.emit()
+    def finish_processing(self, result):
+        self.processing_finished.emit(result)

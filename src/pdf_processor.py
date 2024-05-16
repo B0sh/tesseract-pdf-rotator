@@ -49,18 +49,26 @@ class PDFProcessor:
         document = fitz.open(self.input_pdf_path)
         new_document = fitz.open()  # Create a new PDF document
 
+        processed_pages = [None] * len(document)  # Placeholder for processed pages
+
         with ThreadPoolExecutor() as executor:
             futures = [executor.submit(self.process_page, document, page_num) for page_num in range(len(document))]
             for i, future in enumerate(as_completed(futures)):
                 page = future.result()
                 if page:
-                    new_document.insert_pdf(document, from_page=page.number, to_page=page.number)
+                    processed_pages[page.number] = page
                 if progress_callback:
                     progress_callback(i + 1, len(document))
-        
+
+        for page in processed_pages:
+            if page:
+                new_document.insert_pdf(document, from_page=page.number, to_page=page.number)
+
         new_document.save(self.output_pdf_path)
 
         return {
             "total_pages_processed": len(document),
-            "total_pages": len(new_document)
+            "total_pages": len(new_document),
+            "total_blank_pages": len(document) - len(new_document),
+            "output_pdf_path": self.output_pdf_path,
         }
