@@ -1,9 +1,8 @@
-import fitz  # PyMuPDF
+import fitz
 import cv2
 import numpy as np
 import pytesseract
 import re
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class PDFProcessor:
     def __init__(self, input_pdf_path, output_pdf_path, remove_blank_pages=False):
@@ -38,7 +37,7 @@ class PDFProcessor:
         
         if self.remove_blank_pages and angle is None:
             print(f"Skipping blank page: {page_num + 1}")
-            return None  # Skip blank pages
+            return None
         
         if angle is not None:
             self.rotate_page(page, angle)
@@ -49,14 +48,12 @@ class PDFProcessor:
         document = fitz.open(self.input_pdf_path)
         new_document = fitz.open()  # Create a new PDF document
 
-        with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(self.process_page, document, page_num) for page_num in range(len(document))]
-            for i, future in enumerate(as_completed(futures)):
-                page = future.result()
-                if page:
-                    new_document.insert_pdf(document, from_page=page.number, to_page=page.number)
-                if progress_callback:
-                    progress_callback(i + 1, len(document))
+        for page_num in range(len(document)):
+            page = self.process_page(document, page_num)
+            if page:
+                new_document.insert_pdf(document, from_page=page.number, to_page=page.number)
+            if progress_callback:
+                progress_callback(page_num + 1, len(document))
         
         new_document.save(self.output_pdf_path)
 
