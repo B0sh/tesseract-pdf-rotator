@@ -23,7 +23,7 @@ class PDFProcessor:
             print(f"Error detecting orientation: {e}")
             return None  # Return None if detection fails
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            print(f"Unexpected error during ocr: {e}")
             return None
 
     def rotate_page(self, page, angle):

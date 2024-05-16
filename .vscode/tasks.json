@@ -22,7 +22,7 @@
       "label": "PyInstaller: Clean",
       "type": "shell",
       "command": "rm",
-      "args": ["-rf", "build", "dist", "*.spec"],
+      "args": ["-rf", "build", "dist"],
       "group": {
         "kind": "build",
         "isDefault": false
